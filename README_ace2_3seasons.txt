@@ -47,13 +47,74 @@
 
 # 3.  How do I process the data for each ensemble member of ACE2?
 
-# calc_rmm_1yr.py...  run this for each season, e.g.  
+
+### calc_rmm_1yr.py...  run this for each season, e.g.  
 python calc_rmm_1yr.py 2024
 
 computes the mean percentage of the time spent in favorable MJO phases for quiet and busy ensemble members.   
 
+### ace2_pp_driver_rmm_1yr.sh --> runs find_rmm_1yr.py for all 120 ensembles
+# what input does find_rmm_1yr.py need? 
+TC_genesis_1yr_2024_dec04_2001.0_ace2.npz
+int_prec_2024_dec04_01_b.nc
+int_2024_dec04_01_u850_b.nc
+int_2024_dec04_01_u200_b.nc
+MJO_EOF_ERA5_2001_2010.npz
 
-# 4.  How much space do the 120 ensemble members need for storage? 
+# what does find_rmm_1yr.py produce?   Many things:
+# A one ensemble member figure timeseries of the RMM1 and RMM2 metrics, with the selected MJO phases illustrated in shading
+# An 8 panel figure showing maps of the precipitaiton, u200 and u850 winds for each of the 8 phases of the MJO.
+
+
+
+### tcNum_mjoPhase_ace2.py 
+#--> cycles through all ensemble members for a particular year and then outputs the number of TC genesis events and
+#    the percentage of time the MJO spent in a set of phases for each ensemble member.  this data is saved to a 
+#    file named output_timeseries.csv
+
+# e.g. syntax
+python tcNum_mjoPhase_ace2.py 2013
+
+# what input does tcNum_mjoPhase_ace2.py need?  
+# output from tcNum_mjoPhase_ace2.py is a file named output_timeseries.csv
+
+### plot_timeseries_csv.py
+# produces a timeseries figure of TC counts and the fraction of time when the MJO fwas in a designated set of phases.
+
+# e.g. syntax (using output from previous script, tcNum_mjoPhase)
+python plot_timeseries_csv.py --x-as-index --xtick-step 5 --i output_timeseries.csv
+
+# input plot_timeseries_csv.py needs as input something like this: output_timeseries_2024_AugThSep01_1238.csv
+#              input computed in tcNum_mjoPhase_ace2.py
+
+# output: output_timeseries_plot.png --> see the figures S3-S5 in the Supplemental Information document.  
+
+### parse_tc_tracks.py
+
+# e.g. syntax
+python parse_tc_tracks.py --split-years /ACE2/TCoutput/dec02/tracks.ACE2.TC.10yr.2005.dec01.txt -o /ACE2/TCoutput/
+
+### compute_tc_daily_counts.py
+# this script writes an output txt file that contains the date (the year is wrong, but month and day are correct), 
+# the month of occurrance, the number of storms that are present, and the number of storms that begin on that date.
+
+# e.g. syntax
+python compute_tc_daily_counts.py /Users/C823281551/data/ACE2/tc_data/tracks.ACE2.TC.10yr.2024.dec04.2008.txt --format txt --basin NATL --start-lat-min -30 --start-lat-max 30
+
+### ave_TCdays.py
+python ave_TCdays.py
+
+### plot_MJO_TC_ts_1yr.py
+# this script plots the timeseries of RMM1 and RMM2, uses color shading to identify which of the eight 
+# phases of the MJO are occurring, and overlays the occurance of TC genesis events.  
+
+# plot_MJO_TC_ts_1yr.py functions on one ensemble member at a time.  
+
+# e.g. syntax (choose desired year, decade, and ensemble number): 
+python plot_MJO_TC_ts_1yr.py gah 2024 dec04 02
+
+#4.   Scripts
+
 
 # 5.  Where is the data stored?  
     # the final data files that are used by find_rmm_1yr.py are here: 
