@@ -2,6 +2,9 @@
 #
 # makes mulitple plots with strange names.   one of which is a violin plot for ace2.
 #
+# generates plots with TC genesis numbers with names of the form: 
+# TC_genesis_*year*_dec*.npz and TC_genesis_number_yr_basin_ace2_*year*.npz
+#
 # all of the figures display distributions of the ace2 ensembles that have been run 
 # for 2005, 2013, or 2024.
 #
@@ -31,9 +34,9 @@ import os
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #yr_str    = '1'
-dirstr    = '/home/lsilvers/'
-dirstr1   = '/bell-scratch/C837469599/'
-dirstr2   = '/bell-scratch/C823281551/'
+dirstr    = '/home/user/'
+dirstr1   = '.'
+dirstr2   = '.'
 DIR       = dirstr + 'code/pythonCode/ACE2/'
 expname_list = list(['ace2'])
 #
@@ -44,9 +47,6 @@ fig_dir   = dirstr2 + 'figure/ace2_fig/'
 file_dir_era5_eof = dirstr2 + 'data/ACE2/'
 file_dir_out = file_dir_era5_eof
 
-#year = '2013'
-
-#/bell-scratch/C837469599/
 dirTC = 'ACE2_share/Tracked_TC/StichNodes/'
 
 dir_in  = dirstr1 + dirTC  
@@ -183,29 +183,20 @@ for isub in range(0, 3):
 
         # Load TC genesis data from each year
         data = np.load(file_dir_out+'TC_genesis_'+sub_dir+'_dec'+dec_str+'.npz')
-        #data = np.load(file_dir_out+'TC_genesis_'+str(yr_begin)+'_'+str(yr_last)+'.npz')
 
         # Assign basin index
         lon_TC   = data['lon_TC']
         lat_TC   = data['lat_TC']
         yr_TC = data['yr']
-        #if iexp == 0:
         basin_id_ace2 = np.zeros([np.size(lon_TC)])
         basin_id_ace2[:] = np.nan
-        #else:
-        #    basin_id_era5 = np.zeros([np.size(lon_TC)])
-        #    basin_id_era5[:] = np.nan
 
         for i in range(0, np.size(lon_TC)):
             for ibasin in range(0, nbasin):
                 #print(i, ibasin)
                 if ( (lon_TC[i]-basin_lon_min[ibasin])*(basin_lon_max[ibasin]-lon_TC[i]) >= 0 ) and \
                     ( (lat_TC[i]-basin_lat_min[ibasin])*(basin_lat_max[ibasin]-lat_TC[i]) >= 0 ):
-                    #if iexp == 0:
                     basin_id_ace2[i] = ibasin
-                    #elif iexp == 1:
-                    #    basin_id_era5[i] = ibasin
-                    #print(ibasin)
                     break
         
         for i in range(0, np.size(yr_TC)):
@@ -246,12 +237,8 @@ iplt_atl = 3
 # for each of the three seasons, in the Atlantic basin.  
 
 fig, ax = plt.subplots(1,3,figsize=(6.5, 4),dpi=600)
-#plt.subplots_adjust(left=0.14, right=0.98,top=0.90,bottom=0.05,hspace=0.3, wspace=0.2)
 plt.subplots_adjust(left=0.14, right=0.98,top=0.50,bottom=0.05,hspace=0.3, wspace=0.2)
 plt.rcParams.update({'font.size': 7})
-#ax[0].set_aspect('2.0')
-#ax[1].set_aspect('2.0')
-#ax[2].set_aspect('2.0')
 
 xindex=np.arange(0,40,1) # use if switching axes is desired
 for isub in range(0, 3):
@@ -320,12 +307,8 @@ fig,ax = plt.subplots()
 #colors = ['#ffab0f','#75bbfd','#f6688e','#ada587']
 colors = ['#ffab0f','#82cafc','#ff796c','#ada587']
 #colors = ['#fec615','#95d0fc','#fe7b7c','#d8dcd6']
-#vp = ax.violinplot(dataset=master_data,positions=[1,3,5,7], bw_method=0.25, facecolor=['gold','skyblue','lightcoral','grey'])
 vp = ax.violinplot(dataset=master_data,positions=[1,3,5,7], bw_method=0.25)
 for i, body in enumerate(vp['bodies']):
-#for body in vp['bodies']:
-    #body.set_facecolor(['gold','skyblue','lightcoral','grey'])
-    #body.set_facecolor('grey')
     body.set_facecolor(colors[i])
 vp['cmaxes'].set_color('black')
 vp['cmins'].set_color('black')
@@ -369,24 +352,7 @@ for isub in range(0, 3):
     plt.xticks(np.arange(0,45,5))
     plt.title('stop')
     plt.savefig('wildeyes.png', dpi=300)
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#TC_genesis_all3 = np.zeros([120, nbasin])
-#fig = plt.figure(figsize=(16, 14))
-#print('TC_genesis_all3 shape: ',np.shape(TC_genesis_all3))
-#i1=0
-#i2=39
-#for isub in range(0, 3):
-#    print('i1 is: ',i1,' and i2 is: ',i2)
-#    sub_dir = sub_dir_list[isub]
-#    data = np.load(file_dir_out + 'TC_genesis_number_yr_basin_ace2_'+sub_dir+'.npz')
-#    TC_genesis_temp = data['TC_genesis_yr_basin_ace2']
-#    print('temp shape is: ',np.shape(TC_genesis_temp))
-#    TC_genesis_all3[i1:i2+1,:] = data['TC_genesis_yr_basin_ace2']
-#    i1 = i2+1
-#    i2 = i2+40 
-#    plt.hist( TC_genesis_all3[:,3], bins = np.arange(0,20,0.5))
-#    plt.savefig('saveface.png', dpi=300)
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #print('TC_genesis is: ',TC_genesis_all3[:,3])
